@@ -165,6 +165,9 @@ def buscar_com_fuzzy(nome_recebido, cidade, estado_sigla):
 # =======================================================
 # INTERFACE GRÁFICA WEB (STREAMLIT)
 # =======================================================
+# =======================================================
+# INTERFACE GRÁFICA WEB (STREAMLIT)
+# =======================================================
 st.set_page_config(page_title="Buscador CFF", page_icon="💊")
 
 st.title("💊 Buscador Aproximado CFF")
@@ -196,11 +199,6 @@ if st.button("Buscar Profissional"):
                 for r in resultados:
                     r["Similaridade"] = f"{r.pop('Confianca')}%"
                 
-                # Exibe apenas a tabela, sem destacar um campeão
                 st.dataframe(resultados, use_container_width=True)
-            else:
-                st.error(msg)
-                st.subheader("Ranking Geral (Outras possibilidades):")
-                st.dataframe(resultados)
             else:
                 st.error(msg)
