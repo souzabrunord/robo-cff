@@ -162,9 +162,12 @@ def buscar_com_fuzzy(nome_recebido, cidade, estado_sigla):
 # =======================================================
 # INTERFACE GRÁFICA WEB (STREAMLIT)
 # =======================================================
+# =======================================================
+# INTERFACE GRÁFICA WEB (STREAMLIT)
+# =======================================================
 st.set_page_config(page_title="Buscador CFF", page_icon="💊")
 
-st.title("💊 Buscador Inteligente CFF")
+st.title("💊 Buscador Aproximado CFF")
 st.write("Insira os dados do farmacêutico para realizar a busca aproximada.")
 
 # Criando campos de texto na página
@@ -180,21 +183,23 @@ if st.button("Buscar Profissional"):
     if not estado_input or not cidade_input or not nome_input:
         st.warning("⚠️ Preencha todos os campos antes de buscar.")
     else:
-        with st.spinner(f"Quebrando captchas e buscando em {cidade_input}/{estado_input}... Isso pode levar alguns segundos."):
+        with st.spinner(f"Realizando pesquisa na cidade de {cidade_input} / {estado_input}... Por favor, aguarde."):
+            
             resultados, msg = buscar_com_fuzzy(nome_input, cidade_input, estado_input)
             
             if resultados:
-                st.success("✅ Busca concluída!")
-                st.subheader("Melhor Resultado:")
-                melhor = resultados[0]
+                st.success("✅ Pesquisa finalizada com sucesso!")
+                st.subheader("Resultados Encontrados (Por similaridade):")
                 
-                # Exibe o campeão com destaque
-                if melhor["Confianca"] >= 70:
-                    st.info(f"**Nome:** {melhor['Nome']}\n\n**CRF:** {melhor['CRF']}\n\n**Confiança:** {melhor['Confianca']}%")
-                else:
-                    st.warning(f"Baixa Confiança ({melhor['Confianca']}%). Verifique os resultados abaixo.")
+                # 2. FORMATANDO A TABELA PARA FICAR PROFISSIONAL
+                # Adiciona o símbolo de '%' na nota para visualização e organiza as colunas
+                for r in resultados:
+                    r["Similaridade"] = f"{r.pop('Confianca')}%"
                 
-                # Mostra o ranking em uma tabela bonitinha
+                # Exibe apenas a tabela, sem destacar um campeão
+                st.dataframe(resultados, use_container_width=True)
+            else:
+                st.error(msg)
                 st.subheader("Ranking Geral (Outras possibilidades):")
                 st.dataframe(resultados)
             else:
